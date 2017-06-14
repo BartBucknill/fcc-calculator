@@ -30,9 +30,6 @@ QUnit.test('digit, operator, and period functions should accept and append to la
     clearExpression();
 })
 
-
-
-
 //shuntModel Tests 
 
 //helper: reset stack and queue after tests
@@ -70,8 +67,8 @@ QUnit.test('if stack contains operators higher than or equal in precedence to th
     clearStackAndQueue();
 });
 
-QUnit.test('when an infix expression as an array of operators (as strings) and numbers is passed to shuntModel.run() they should be placed in postfix in queue array', function(assert) {
-    shuntModel.run([99,'+',999,'/',8,'+',0,'*',0.5]);
+QUnit.test('when an infix expression as an array of string operators and numbers is passed to shuntModel.run() they should be placed in postfix in queue array and string numbers should be converted to numbers', function(assert) {
+    shuntModel.run(['99','+','999','/','8','+','0','*','0.5']);
     assert.deepEqual(shuntModel.queue, [99,999,8,'/', '+',0,0.5,'*','+'],'operators and numbers should be in queue in correct order (postfix)');
     assert.deepEqual(shuntModel.stack, [], 'stack should be empty');
     clearStackAndQueue();
