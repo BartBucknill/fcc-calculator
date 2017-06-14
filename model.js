@@ -1,14 +1,5 @@
 'use strict';
 
-
-const octopus = {
-
-    processInput(preppedInfix) {
-        shuntModel.run(preppedInfix);
-        postfixEvalModel.run(shuntModel.queue);
-    }
-}
-
 const inputCheckModel = {
     
     expression: [],
