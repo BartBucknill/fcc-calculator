@@ -54,13 +54,6 @@ QUnit.test('return operator on top of stack', function(assert) {
     clearStackAndQueue(); 
 });
 
-QUnit.test('check if item is a number', function(assert) {
-   assert.strictEqual(shuntModel.isNum(10), true, '10 is a number');
-   assert.strictEqual(shuntModel.isNum(-99999), true, '-99999 is a number');
-   assert.strictEqual(shuntModel.isNum(''), false, 'empty string is not a number');
-   assert.strictEqual(shuntModel.isNum('2'), false, 'string "2" is not a number');
-});
-
 QUnit.test('if higher precedence operator than current is on stack, it should be moved to queue, when not current should be placed on stack', function(assert) {
     shuntModel.stack.push('*');
     shuntModel.placeOperator('+');
