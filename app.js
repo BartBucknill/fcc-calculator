@@ -9,14 +9,6 @@ const octopus = {
     }
 }
 
-const model = {
-
-    isNum(item) {
-        return typeof(item) === 'number';
-    }
-
-}
-
 const inputCheckModel = {
     
     expression: [],
@@ -78,7 +70,7 @@ const shuntModel = {
     
     parseArray(array) {
         array.forEach(item => {
-            if (this.isNum(item)) { this.queue.push(item); }
+            if (isFinite(item)) { this.queue.push(parseFloat(item)); }
             else { this.placeOperator(item); }
         })
     },
@@ -106,8 +98,6 @@ const shuntModel = {
 
 }
 
-Object.setPrototypeOf(shuntModel, model);
-
 const postfixEvalModel = {
 
     stack: [],
@@ -123,7 +113,7 @@ const postfixEvalModel = {
 
     run(postfix) {
         for (let item of postfix) { //for... of syntax allows return to break the loop which forEach does not
-            if (this.isNum(item)) { this.stack.push(item); }
+            if (isFinite(item)) { this.stack.push(item); }
             else { 
                 if (this.insufficientOperands()) { return; };
                 this.eval(item); 
@@ -153,5 +143,3 @@ const postfixEvalModel = {
     }
 
 }
-
-Object.setPrototypeOf(postfixEvalModel, model);
