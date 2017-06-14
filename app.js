@@ -1,16 +1,71 @@
 'use strict';
-//output from prepDataModel to be as the below
-let data = [2,'+',2,'*',4,'-',8, '/', 2];
 
-// let prepDataModel = {
-//     removeSpaces(string) {
-//         return string.replace(/ /g, '');
-//     },
-//      string.split(/([*/+-/])/g).forEach(item => 
-//             item = parseFloat(item) || item;
-// }
 
-let shuntModel = {
+const octopus = {
+
+    processInput(preppedInfix) {
+        shuntModel.run(preppedInfix);
+        postfixEvalModel.run(shuntModel.queue);
+    }
+}
+
+const model = {
+
+    isNum(item) {
+        return typeof(item) === 'number';
+    }
+
+}
+
+const inputCheckModel = {
+    
+    expression: [],
+
+    integerReg: /^[0-9]+$/,
+
+    operatorReg: /^[*/+-]+$/,
+
+    lastItem() { 
+        return this.expression[this.expression.length - 1];
+    },
+
+    lastIsInteger() {
+        return this.integerReg.test(this.lastItem());
+    },
+
+    lastIsOperator() {
+        return this.operatorReg.test(this.lastItem());
+    },
+
+    concatLastItem(input) {
+        this.expression[this.expression.length - 1] = this.lastItem() + input;
+    },
+    
+    digit(input) {
+        if (isFinite(this.lastItem())) {
+            this.concatLastItem(input);
+        }
+        else { this.expression.push(input); }
+    },
+
+    operator(input) {
+        if (isFinite(this.lastItem())) {
+            this.expression.push(input);
+        }
+    },
+
+    period(input) {
+        if (this.lastIsInteger()) {
+           this.concatLastItem(input); 
+        }
+        if (this.lastIsOperator() || this.expression.length === 0) {
+            this.expression.push('0.');
+        }
+    }
+
+}
+
+const shuntModel = {
 
     queue: [],
 
@@ -35,27 +90,68 @@ let shuntModel = {
     },
 
     placeOperator(op) {
-        while (this.topOfStackIsHigherPrecedence(op, this.topOfStack())) {
+        while (this.topOfStackPrecedenceHigherOrEqual(op, this.topOfStack()) && this.stack.length > 0) {
             this.queue.push(this.stack.pop());
         }
         this.stack.push(op);
     },
 
-    topOfStackIsHigherPrecedence(currentOp, stackTopOp) {
-        let reg = /[*\/]/;
-        return (reg.test(stackTopOp) && !reg.test(currentOp));
+   topOfStackPrecedenceHigherOrEqual(currentOp, stackTopOp) {
+       let plusMinus = /[+-]/;
+       let multDiv = /[*\/]/;
+       return (multDiv.test(stackTopOp) || plusMinus.test(currentOp));
     },
 
-    topOfStack() { return this.stack[this.stack.length - 1]; },
+    topOfStack() { return this.stack[this.stack.length - 1]; }
 
-    isNum(item) {
-        return typeof(item) === 'number';
+}
+
+Object.setPrototypeOf(shuntModel, model);
+
+const postfixEvalModel = {
+
+    stack: [],
+
+    result: 'No result yet calculated',
+
+    operators: {
+        '*': function([a, b]) { return a * b; },
+        '/': function([a, b]) { return a / b; },
+        '+': function([a, b]) { return a + b; },
+        '-': function([a, b]) { return a - b; }
+    },
+
+    run(postfix) {
+        for (let item of postfix) { //for... of syntax allows return to break the loop which forEach does not
+            if (this.isNum(item)) { this.stack.push(item); }
+            else { 
+                if (this.insufficientOperands()) { return; };
+                this.eval(item); 
+            }
+        };
+        this.checkAndAssignResult();
+    },
+
+    eval(op) {
+        let operands = this.stack.splice(-2);
+        this.stack.push(this.operators[op](operands));
+    },
+
+    insufficientOperands() {
+        if (this.stack.length < 2) { 
+            this.result = 'Error: insufficient operands';
+            return true;
+         }
+         return false;
+    },
+
+    checkAndAssignResult() {
+        if (this.stack.length > 1) {
+            this.result = 'Error: too many operands';
+        }
+        else { this.result = this.stack[0]; }
     }
 
 }
 
-let postfixEvalModel = {
-
-
-
-}
+Object.setPrototypeOf(postfixEvalModel, model);
