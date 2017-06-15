@@ -1,9 +1,48 @@
-//inputCheckModel Tests
+//input verification and expression update Tests (view, octopus, inputCheckModel).
+//TO DO: write tests for this functionality; blocking point: how to simulate keypress?
 
-//helper: clear expression
+//helper
+function simulateKeyboardEvent(keyValue, whichValue = undefined) {
+    let event = new KeyboardEvent('keydown', { key: keyValue, which: whichValue });
+    view.inputSelector.dispatchEvent(event);
+}
+//helper
 function clearExpression() {
     inputCheckModel.expression = [];
 }
+
+QUnit.test('permitted characters only input should be placed in expression and displayed in input field', function(assert) {
+    simulateKeyboardEvent('9');
+    assert.deepEqual(inputCheckModel.expression, ['9'], 'input of 9 should be placed in expression array');
+    assert.strictEqual(view.inputSelector.value, '9', 'permitted input should be displayed as string in input field');
+    simulateKeyboardEvent('.');
+    assert.deepEqual(inputCheckModel.expression, ['9.'], 'input of "." after number should be concatenated with previous number in expression array');
+    assert.deepEqual(view.inputSelector.value, '9.', 'permitted input should be displayed as string in input field');
+    simulateKeyboardEvent('*');
+    assert.deepEqual(inputCheckModel.expression, ['9.','*'], 'input of * should be inserted into array as new item');
+    assert.strictEqual(view.inputSelector.value, '9.*', 'permitted input should be displayed as string in input field');
+    simulateKeyboardEvent('.');
+    assert.deepEqual(inputCheckModel.expression, ['9.','*','0.'], 'input of "." after operator should be inserted into array as new item prepended with 0');
+    assert.strictEqual(view.inputSelector.value, '9.*0.', 'permitted input should be displayed as string in input field');
+    clearExpression();
+})
+
+QUnit.test('backspace should remove last character, either an array item or last character of last item, value of input field should be updated', function(assert) {
+    simulateKeyboardEvent('1');
+    simulateKeyboardEvent('+');
+    simulateKeyboardEvent('Backspace');
+    assert.deepEqual(inputCheckModel.expression, ['1'], 'last item should have been deleted');
+    assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
+    simulateKeyboardEvent('2');
+    simulateKeyboardEvent('Backspace');
+    assert.deepEqual(inputCheckModel.expression, ['1'], 'last character of number 12 should have been deleted leaving 1');
+    assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
+
+    clearExpression();
+
+})
+
+//inputCheckModel Tests
 
 QUnit.test('digit, operator, and period functions should accept and append to last item or create new item, or reject, new input as appropriate', function(assert) {
     inputCheckModel.digit('2');

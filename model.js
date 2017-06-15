@@ -4,6 +4,10 @@ const inputCheckModel = {
     
     expression: [],
 
+    expressionString() {
+        return this.expression.join('');
+    },
+
     integerReg: /^[0-9]+$/,
 
     operatorReg: /^[*/+-]+$/,
@@ -22,6 +26,21 @@ const inputCheckModel = {
 
     concatLastItem(input) {
         this.expression[this.expression.length - 1] = this.lastItem() + input;
+    },
+
+    deleteCharacter() {
+        console.log('del char function triggered');
+        if (this.lastItem().length > 1) {
+            this.expression[this.expression.length - 1] = this.lastItem().slice(0,-1);
+        }
+        else { this.expression.pop(); }
+    },
+
+    run(keydownEvent) {
+        if (/[0-9]/.test(keydownEvent.key)) { this.digit(keydownEvent.key); }
+        else if (/[*/+-]/.test(keydownEvent.key)) { this.operator(keydownEvent.key); }
+        else if (/\./.test(keydownEvent.key)) { this.period(keydownEvent.key); }
+        else if (keydownEvent.key === 'Backspace') { this.deleteCharacter(); }
     },
     
     digit(input) {
