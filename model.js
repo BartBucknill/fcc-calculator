@@ -155,9 +155,9 @@ const postfixEvalModel = {
         }
         else { 
             this.result = this.stack[0];
-            this.stack = [];
             console.log('stack after reset', this.stack)
          }
+        this.stack = [];
     }
 
 }
