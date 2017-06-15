@@ -41,7 +41,7 @@ const inputCheckModel = {
         else if (/[*/+-]/.test(keydownEvent.key)) { this.operator(keydownEvent.key); }
         else if (/\./.test(keydownEvent.key)) { this.period(keydownEvent.key); }
         else if (keydownEvent.key === 'Backspace') { this.deleteCharacter(); }
-        else if (keydownEvent.key === 'Enter' && this.expression.length > 0) { octopus.processInput(this.expression); }
+        else if (keydownEvent.key === 'Enter' && this.expression.length > 0 && !this.operatorReg.test(this.expression.slice(-1))) { octopus.processInput(this.expression); }
     },
     
     digit(input) {
