@@ -1,5 +1,4 @@
 //input verification and expression update Tests (view, octopus, inputCheckModel).
-//TO DO: write tests for this functionality; blocking point: how to simulate keypress?
 
 //helper
 function simulateKeyboardEvent(keyValue, whichValue = undefined) {
@@ -37,9 +36,19 @@ QUnit.test('backspace should remove last character, either an array item or last
     simulateKeyboardEvent('Backspace');
     assert.deepEqual(inputCheckModel.expression, ['1'], 'last character of number 12 should have been deleted leaving 1');
     assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
+    clearExpression();
+})
+
+QUnit.test('on enter expression should be evaluated, the result should be in postfixEvalModel.result and should be displayed in the input field', function(assert) {
+    simulateKeyboardEvent('1');
+    simulateKeyboardEvent('+');
+    simulateKeyboardEvent('2');
+    simulateKeyboardEvent('Enter');
+    assert.strictEqual(postfixEvalModel.result, 3, 'input 1 + 2 enter, should make postfixEvalModel.result = 3');
+    assert.strictEqual(view.inputSelector.value, '3', 'input 1 + 2 enter, should make input field value = 3');
 
     clearExpression();
-
+    clearStackAndResult();
 })
 
 //inputCheckModel Tests

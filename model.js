@@ -29,8 +29,8 @@ const inputCheckModel = {
     },
 
     deleteCharacter() {
-        console.log('del char function triggered');
-        if (this.lastItem().length > 1) {
+        console.log(this.expression);
+        if (this.expression.length >= 1 && this.lastItem().length > 1) {
             this.expression[this.expression.length - 1] = this.lastItem().slice(0,-1);
         }
         else { this.expression.pop(); }
@@ -41,6 +41,7 @@ const inputCheckModel = {
         else if (/[*/+-]/.test(keydownEvent.key)) { this.operator(keydownEvent.key); }
         else if (/\./.test(keydownEvent.key)) { this.period(keydownEvent.key); }
         else if (keydownEvent.key === 'Backspace') { this.deleteCharacter(); }
+        else if (keydownEvent.key === 'Enter') { octopus.processInput(this.expression); }
     },
     
     digit(input) {
@@ -76,6 +77,7 @@ const shuntModel = {
     run(array) {
         this.parseArray(array);
         this.pushStackToQueue();
+        this.stack = [];
     },
     
     parseArray(array) {
@@ -122,6 +124,7 @@ const postfixEvalModel = {
     },
 
     run(postfix) {
+        console.log(postfix);
         for (let item of postfix) { //for... of syntax allows return to break the loop which forEach does not
             if (isFinite(item)) { this.stack.push(item); }
             else { 
@@ -147,9 +150,14 @@ const postfixEvalModel = {
 
     checkAndAssignResult() {
         if (this.stack.length > 1) {
+            console.log(this.stack);
             this.result = 'Error: too many operands';
         }
-        else { this.result = this.stack[0]; }
+        else { 
+            this.result = this.stack[0];
+            this.stack = [];
+            console.log('stack after reset', this.stack)
+         }
     }
 
 }

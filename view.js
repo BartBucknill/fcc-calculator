@@ -5,13 +5,13 @@ const view = {
     inputSelector: document.getElementById('input'),
 
     addListener() {
-        this.inputSelector.addEventListener('keydown', function(keypressEvent) {
-            keypressEvent.preventDefault();
-            octopus.inputCheckExpressionUpdate(keypressEvent);
+        this.inputSelector.addEventListener('keydown', function(keydownEvent) {
+            keydownEvent.preventDefault();
+            octopus.inputCheckExpressionUpdate(keydownEvent);
         })
     },
 
-    renderExpression(expression) {
+    renderToInputField(expression) {
         this.inputSelector.value = expression;
     }
 
