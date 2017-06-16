@@ -7,15 +7,15 @@ const octopus = {
     },
 
     inputCheckExpressionUpdate(keydownEvent) {
-        inputCheckModel.run(keydownEvent);
-        view.renderToInputField(inputCheckModel.expressionString());
+        checkAndPrepInputModel.run(keydownEvent);
+        view.renderToInputField(checkAndPrepInputModel.expressionString());
     },
 
     processInput(infixArray) {
         shuntModel.run(infixArray);
         postfixEvalModel.run(shuntModel.queue);
         shuntModel.queue = [];
-        inputCheckModel.expression = [postfixEvalModel.result.toString()];
+        checkAndPrepInputModel.expression = [postfixEvalModel.result.toString()];
         view.renderToInputField(postfixEvalModel.result);
     }
 

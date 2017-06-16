@@ -1,6 +1,6 @@
 'use strict';
 
-const inputCheckModel = {
+const checkAndPrepInputModel = {
     
     expression: [],
 
@@ -12,7 +12,9 @@ const inputCheckModel = {
 
     operatorReg: /^[*/+-]+$/,
 
-    lastItem() { 
+    plusMinusReg: /[+-]/,
+
+    lastItem() {
         return this.expression[this.expression.length - 1];
     },
 
@@ -20,7 +22,7 @@ const inputCheckModel = {
         return this.integerReg.test(this.lastItem());
     },
 
-    lastIsOperator(from) {
+    isOperator(from) {
         return this.expression.slice(from).every( (item) => {
             return this.operatorReg.test(item);
         });
@@ -44,31 +46,44 @@ const inputCheckModel = {
         else if (keydownEvent.key === 'Backspace') { this.deleteCharacter(); }
         else if (keydownEvent.key === 'Enter' && this.expression.length > 0 && !this.operatorReg.test(this.expression.slice(-1))) { octopus.processInput(this.expression); }
     },
-    
+
+    lastIsPosNegSign() {
+        let lastIsSecondOperatorInSequence = this.expression.length > 0 && this.isOperator(-2);
+        let lastIsNegPosSignAndIsFirstItem = this.expression.length == 1 && this.plusMinusReg.test(this.lastItem());
+        return lastIsSecondOperatorInSequence || lastIsNegPosSignAndIsFirstItem;
+    },
+
     digit(input) {
         if (isFinite(this.lastItem())) {
             this.concatLastItem(input);
         }
-        else if (this.expression.length > 0 && this.lastIsOperator(-2) || (this.expression.length == 1 && /[+-]/.test(this.lastItem()))) {
+        else if (this.lastIsPosNegSign()) {
             this.concatLastItem(input);
         } 
         else { this.expression.push(input); }
     },
 
+    acceptNegPosSign(input) {
+        let isPlusMinus = this.plusMinusReg.test(input);
+        let isFirstItem = this.expression.length === 0;
+        let isSecondOperatorInSequence = this.expression.length > 1 && isFinite(this.expression.slice(-2,-1));
+        return isPlusMinus && (isFirstItem || isSecondOperatorInSequence);
+    },
+   
     operator(input) {
         if (isFinite(this.lastItem())) {
             this.expression.push(input);
         }
-        else if (/[+-]/.test(input) && (this.expression.length === 0 || (this.expression.length > 1 && isFinite(this.expression.slice(-2,-1))))) {
+        else if (this.acceptNegPosSign(input)) {
             this.expression.push(input);
         } 
     },
-
+    
     period(input) {
-        if (this.lastIsInteger() && !this.operatorReg.test(this.lastItem().slice(-1))) {
+        if (this.lastIsInteger()) {
            this.concatLastItem(input); 
         }
-        if (this.lastIsOperator(-1) || this.expression.length === 0) {
+        if (this.isOperator(-1) || this.expression.length === 0) {
             this.expression.push('0.');
         }
     }
