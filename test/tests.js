@@ -46,12 +46,60 @@ QUnit.test('on enter expression should be evaluated, the result should be in pos
     simulateKeyboardEvent('Enter');
     assert.strictEqual(postfixEvalModel.result, 3, 'input 1 + 2 enter, should make postfixEvalModel.result = 3');
     assert.strictEqual(view.inputSelector.value, '3', 'input 1 + 2 enter, should make input field value = 3');
-
+    clearExpression();
+    clearStackAndResult();
+    simulateKeyboardEvent('1');
+    simulateKeyboardEvent('-');
+    simulateKeyboardEvent('-');
+    simulateKeyboardEvent('2');
+    simulateKeyboardEvent('Enter');
+    assert.strictEqual(postfixEvalModel.result, 3, 'input 1 - - 2 enter, should make postfixEvalModel.result = 3');
+    assert.strictEqual(view.inputSelector.value, '3', 'input 1 - - 2 enter, should make input field value = 3');
+    clearExpression();
+    clearStackAndResult();
+    simulateKeyboardEvent('-');
+    simulateKeyboardEvent('10');
+    simulateKeyboardEvent('+');
+    simulateKeyboardEvent('-');
+    simulateKeyboardEvent('2');
+    simulateKeyboardEvent('Enter');
+    assert.strictEqual(postfixEvalModel.result, -12, 'input - 10 + - 2 enter, should make postfixEvalModel.result = -12');
+    assert.strictEqual(view.inputSelector.value, '-12', 'input - 10 + - 2 enter, should make input field value = -12');
     clearExpression();
     clearStackAndResult();
 })
 
 //inputCheckModel Tests
+
+QUnit.test('lastIsOperator method should return true if all items are of set +-*/ and false otherwise', function(assert) {
+    inputCheckModel.expression = ['+', '-'];
+    assert.strictEqual(inputCheckModel.lastIsOperator(-2), true, 'if passed -2 and last 2 items are operators method should return true');
+    inputCheckModel.expression = ['12'];
+    assert.strictEqual(inputCheckModel.lastIsOperator(-1), false, 'if passed -1 and last item !operator method should return false');
+    inputCheckModel.expression = ['1'];
+    assert.strictEqual(inputCheckModel.lastIsOperator(-2), false, 'if passed -2 and expression.length = 1 and item is not operator should return false');
+    clearExpression();
+})
+
+QUnit.test('it should be possible to enter +- to denote positive or negative numbers', function(assert) {
+    simulateKeyboardEvent('-');
+    assert.deepEqual(inputCheckModel.expression, ['-'], 'input "-" when input field empty should be placed in expression as first item');
+    assert.strictEqual(view.inputSelector.value, '-', 'input "-" when input field is empty should set input field value to -');
+    simulateKeyboardEvent('-');
+    assert.deepEqual(inputCheckModel.expression, ['-'], 'should not be possible to input two - at beginning of expression');
+    assert.strictEqual(view.inputSelector.value, '-', 'input second - should not be possible, input field value should remain -');
+    simulateKeyboardEvent('2');
+    assert.deepEqual(inputCheckModel.expression, ['-2'], '2 after - as first item should be concatenated forming -2');
+    assert.strictEqual(view.inputSelector.value, '-2', '2 after - as first item should change input field value to -2');
+    simulateKeyboardEvent('+');
+    simulateKeyboardEvent('2');
+    simulateKeyboardEvent('+');
+    simulateKeyboardEvent('-');
+    simulateKeyboardEvent('6');
+    assert.deepEqual(inputCheckModel.expression, ['-2', '+', '2','+','-6'], '- should be treated as denoting a negative number when following another operator');
+    assert.strictEqual(view.inputSelector.value, '-2+2+-6', '- should be treated as denoting a negative number when following another operator');
+    clearExpression();
+})
 
 QUnit.test('digit, operator, and period functions should accept and append to last item or create new item, or reject, new input as appropriate', function(assert) {
     inputCheckModel.digit('2');
@@ -167,16 +215,24 @@ QUnit.test('after postfixEvalModel.run() has run, postfixEvalModel.result should
 //Test shuntModel and postfixEvalModel together
 
 QUnit.test('if octopus.processInput is called with correct infix expression, postfixEvalModel.result should be set to the correct result, if infix expression was incorrect it should be set to an error', function(assert) {
-    octopus.processInput([1, '-', 2, '*', 3]);
+    octopus.processInput(['1', '-', '2', '*', '3']);
     assert.strictEqual(postfixEvalModel.result, -5, '1 - 2 * 3 = -5');
     clearStackAndQueue();
     clearStackAndResult();
-    octopus.processInput([10, '/', 5, '+', 2, '*', 8, '-', 20]);
+    octopus.processInput(['10', '/', '5', '+', '2', '*', '8', '-', '20']);
     assert.strictEqual(postfixEvalModel.result, -2, '10 / 5 + 2 * 8 - 20 = -2');
     clearStackAndQueue();
     clearStackAndResult();
-    octopus.processInput([999, '+', 8, '/', 66, '-', 10, '*', 777, '-', 999]);
+    octopus.processInput(['999', '+', '8', '/', '66', '-', '10', '*', '777', '-', '999']);
     assert.strictEqual(postfixEvalModel.result, -7769.878787878788, '999+8/66-10*777-999 = -7769.878787878788');
+    clearStackAndQueue();
+    clearStackAndResult();
+    octopus.processInput(['9', '-', '-9']);
+    assert.strictEqual(postfixEvalModel.result, 18, '9 - -9 = 18');
+    clearStackAndQueue();
+    clearStackAndResult();
+    octopus.processInput(['-200', '*', '-9']);
+    assert.strictEqual(postfixEvalModel.result, 1800, '-200 * -9 = 1800');
     clearStackAndQueue();
     clearStackAndResult();
 })

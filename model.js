@@ -8,7 +8,7 @@ const inputCheckModel = {
         return this.expression.join('');
     },
 
-    integerReg: /^[0-9]+$/,
+    integerReg: /^[-0-9]+$/,
 
     operatorReg: /^[*/+-]+$/,
 
@@ -20,8 +20,10 @@ const inputCheckModel = {
         return this.integerReg.test(this.lastItem());
     },
 
-    lastIsOperator() {
-        return this.operatorReg.test(this.lastItem());
+    lastIsOperator(from) {
+        return this.expression.slice(from).every( (item) => {
+            return this.operatorReg.test(item);
+        });
     },
 
     concatLastItem(input) {
@@ -29,7 +31,6 @@ const inputCheckModel = {
     },
 
     deleteCharacter() {
-        console.log(this.expression);
         if (this.expression.length >= 1 && this.lastItem().length > 1) {
             this.expression[this.expression.length - 1] = this.lastItem().slice(0,-1);
         }
@@ -48,6 +49,9 @@ const inputCheckModel = {
         if (isFinite(this.lastItem())) {
             this.concatLastItem(input);
         }
+        else if (this.expression.length > 0 && this.lastIsOperator(-2) || (this.expression.length == 1 && /[+-]/.test(this.lastItem()))) {
+            this.concatLastItem(input);
+        } 
         else { this.expression.push(input); }
     },
 
@@ -55,13 +59,16 @@ const inputCheckModel = {
         if (isFinite(this.lastItem())) {
             this.expression.push(input);
         }
+        else if (/[+-]/.test(input) && (this.expression.length === 0 || (this.expression.length > 1 && isFinite(this.expression.slice(-2,-1))))) {
+            this.expression.push(input);
+        } 
     },
 
     period(input) {
-        if (this.lastIsInteger()) {
+        if (this.lastIsInteger() && !this.operatorReg.test(this.lastItem().slice(-1))) {
            this.concatLastItem(input); 
         }
-        if (this.lastIsOperator() || this.expression.length === 0) {
+        if (this.lastIsOperator(-1) || this.expression.length === 0) {
             this.expression.push('0.');
         }
     }
@@ -124,7 +131,6 @@ const postfixEvalModel = {
     },
 
     run(postfix) {
-        console.log(postfix);
         for (let item of postfix) { //for... of syntax allows return to break the loop which forEach does not
             if (isFinite(item)) { this.stack.push(item); }
             else { 
@@ -143,6 +149,7 @@ const postfixEvalModel = {
     insufficientOperands() {
         if (this.stack.length < 2) { 
             this.result = 'Error: insufficient operands';
+            this.stack = [];
             return true;
          }
          return false;
@@ -150,12 +157,10 @@ const postfixEvalModel = {
 
     checkAndAssignResult() {
         if (this.stack.length > 1) {
-            console.log(this.stack);
             this.result = 'Error: too many operands';
         }
         else { 
             this.result = this.stack[0];
-            console.log('stack after reset', this.stack)
          }
         this.stack = [];
     }
