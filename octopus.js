@@ -9,6 +9,9 @@ const octopus = {
     inputCheckExpressionUpdate(keydownEvent) {
         checkAndPrepInputModel.run(keydownEvent);
         view.renderToInputField(checkAndPrepInputModel.expressionString());
+        if (postfixEvalModel.error()) {
+            this.resetModels();
+        }
     },
 
     processInput(infixArray) {
@@ -16,7 +19,12 @@ const octopus = {
         postfixEvalModel.run(shuntModel.queue);
         shuntModel.queue = [];
         checkAndPrepInputModel.expression = [postfixEvalModel.result.toString()];
-        view.renderToInputField(postfixEvalModel.result);
+    },
+
+    resetModels() {
+        checkAndPrepInputModel.reset();
+        shuntModel.reset();
+        postfixEvalModel.reset();
     }
 
 }

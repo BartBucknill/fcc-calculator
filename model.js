@@ -4,6 +4,8 @@ const checkAndPrepInputModel = {
     
     expression: [],
 
+    reset() { this.expression = []; },
+
     expressionString() {
         return this.expression.join('');
     },
@@ -101,6 +103,11 @@ const shuntModel = {
         this.pushStackToQueue();
         this.stack = [];
     },
+
+    reset() {
+        this.queue = [];
+        this.stack = [];
+    },
     
     parseArray(array) {
         array.forEach(item => {
@@ -136,7 +143,17 @@ const postfixEvalModel = {
 
     stack: [],
 
-    result: 'No result yet calculated',
+    result: null,
+
+    reset() {
+        postfixEvalModel.stack = [];
+        postfixEvalModel.result = null;
+    },
+
+    error() {
+        if(isFinite(postfixEvalModel.result)) { return false; }
+        return true;
+    },
 
     operators: {
         '*': function([a, b]) { return a * b; },
@@ -174,7 +191,7 @@ const postfixEvalModel = {
         if (this.stack.length > 1) {
             this.result = 'Error: too many operands';
         }
-        else { 
+        else {
             this.result = this.stack[0];
          }
         this.stack = [];

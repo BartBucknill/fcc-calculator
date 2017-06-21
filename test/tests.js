@@ -46,8 +46,7 @@ QUnit.test('on enter expression should be evaluated, the result should be in pos
     simulateKeyboardEvent('Enter');
     assert.strictEqual(postfixEvalModel.result, 3, 'input 1 + 2 enter, should make postfixEvalModel.result = 3');
     assert.strictEqual(view.inputSelector.value, '3', 'input 1 + 2 enter, should make input field value = 3');
-    clearExpression();
-    clearStackAndResult();
+    octopus.resetModels();
     simulateKeyboardEvent('1');
     simulateKeyboardEvent('-');
     simulateKeyboardEvent('-');
@@ -55,8 +54,7 @@ QUnit.test('on enter expression should be evaluated, the result should be in pos
     simulateKeyboardEvent('Enter');
     assert.strictEqual(postfixEvalModel.result, 3, 'input 1 - - 2 enter, should make postfixEvalModel.result = 3');
     assert.strictEqual(view.inputSelector.value, '3', 'input 1 - - 2 enter, should make input field value = 3');
-    clearExpression();
-    clearStackAndResult();
+    octopus.resetModels();
     simulateKeyboardEvent('-');
     simulateKeyboardEvent('10');
     simulateKeyboardEvent('+');
@@ -65,8 +63,7 @@ QUnit.test('on enter expression should be evaluated, the result should be in pos
     simulateKeyboardEvent('Enter');
     assert.strictEqual(postfixEvalModel.result, -12, 'input - 10 + - 2 enter, should make postfixEvalModel.result = -12');
     assert.strictEqual(view.inputSelector.value, '-12', 'input - 10 + - 2 enter, should make input field value = -12');
-    clearExpression();
-    clearStackAndResult();
+    octopus.resetModels();
 })
 
 //checkAndPrepInputModel Tests
@@ -98,7 +95,7 @@ QUnit.test('it should be possible to enter +- to denote positive or negative num
     simulateKeyboardEvent('6');
     assert.deepEqual(checkAndPrepInputModel.expression, ['-2', '+', '2','+','-6'], '- should be treated as denoting a negative number when following another operator');
     assert.strictEqual(view.inputSelector.value, '-2+2+-6', '- should be treated as denoting a negative number when following another operator');
-    clearExpression();
+    octopus.resetModels();
 })
 
 QUnit.test('digit, operator, and period functions should accept and append to last item or create new item, or reject, new input as appropriate', function(assert) {
@@ -120,10 +117,10 @@ QUnit.test('digit, operator, and period functions should accept and append to la
     assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.3','/'], 'if last item is operator, reject operator');
     checkAndPrepInputModel.period('.');
     assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.3','/','0.'], 'if last item is operator, add period prepended to 0 as new array item');
-    clearExpression();
+    octopus.resetModels();
     checkAndPrepInputModel.period('.');
     assert.deepEqual(checkAndPrepInputModel.expression, ['0.'], 'if array is empty, add period prepended to 0 as new array item');
-    clearExpression();
+    octopus.resetModels();
 })
 
 //shuntModel Tests 
@@ -144,7 +141,7 @@ QUnit.test('check if operator on top of stack is of higher than or equal precede
 QUnit.test('return operator on top of stack', function(assert) {
     shuntModel.stack.push('+');
     assert.strictEqual(shuntModel.topOfStack(), '+', 'should return +');
-    clearStackAndQueue(); 
+    octopus.resetModels();
 });
 
 QUnit.test('if higher precedence operator than current is on stack, it should be moved to queue, when not current should be placed on stack', function(assert) {
@@ -152,7 +149,7 @@ QUnit.test('if higher precedence operator than current is on stack, it should be
     shuntModel.placeOperator('+');
     assert.deepEqual(shuntModel.queue, ['*'], '* > +, so * should be moved from stack to queue');
     assert.deepEqual(shuntModel.stack, ['+'], '+ should have been placed on stack');
-    clearStackAndQueue();
+    octopus.resetModels();
 });
 
 QUnit.test('if stack contains operators higher than or equal in precedence to the current operator, they should all be moved to queue before current is placed', function(assert) {
@@ -160,14 +157,14 @@ QUnit.test('if stack contains operators higher than or equal in precedence to th
     shuntModel.placeOperator('-');
     assert.deepEqual(shuntModel.queue, ['*', '+'], 'all higher/equal precedence operators on stack should have been moved to queue');
     assert.deepEqual(shuntModel.stack, ['-'], 'lower precedence operator should remain on stack and current operator should have been placed there');
-    clearStackAndQueue();
+    octopus.resetModels();
 });
 
 QUnit.test('when an infix expression as an array of string operators and numbers is passed to shuntModel.run() they should be placed in postfix in queue array and string numbers should be converted to numbers', function(assert) {
     shuntModel.run(['99','+','999','/','8','+','0','*','0.5']);
     assert.deepEqual(shuntModel.queue, [99,999,8,'/', '+',0,0.5,'*','+'],'operators and numbers should be in queue in correct order (postfix)');
     assert.deepEqual(shuntModel.stack, [], 'stack should be empty');
-    clearStackAndQueue();
+    octopus.resetModels();
 });
 
 
@@ -192,23 +189,22 @@ QUnit.test('when eval() is called with given operator and 2 or more operands on 
     postfixEvalModel.stack.push(12);
     postfixEvalModel.eval('-');
     assert.deepEqual(postfixEvalModel.stack, [8], 'result of 20 - 12 should be stack of 8');
-    clearStackAndResult();
+    octopus.resetModels();
 });
 
 QUnit.test('after postfixEvalModel.run() has run, postfixEvalModel.result should contain either the correct result or if postfix expression was incorrect should contain an error', function(assert) {
     postfixEvalModel.run([1,2,'+']);
     assert.deepEqual(postfixEvalModel.result, 3, '1 + 2 = 3');
-    clearStackAndResult();
+    octopus.resetModels();
     postfixEvalModel.run([10, 5, '/', 2, 8, '*', '+', 20, '-']); 
     assert.strictEqual(postfixEvalModel.result, -2, '10 / 5 + 2 * 8 - 20 = -2');
-    clearStackAndResult();
+    octopus.resetModels();
     postfixEvalModel.run([5,5,5,5,5,5,5,5, '+', '*']);
     assert.strictEqual(postfixEvalModel.result, 'Error: too many operands', 'If postfix is incorrect and has too many operands final stack length is > 1, result should be Error: too many operands');
-    clearStackAndResult();
+    octopus.resetModels();
     postfixEvalModel.run([1, 2, '+', '-']);
     assert.strictEqual(postfixEvalModel.result, 'Error: insufficient operands', 'If postfix is incorrect and has too few operands result should be set to Error: insufficient operands');
-    clearStackAndResult();
-
+    octopus.resetModels();
 })
 
 
@@ -217,22 +213,27 @@ QUnit.test('after postfixEvalModel.run() has run, postfixEvalModel.result should
 QUnit.test('if octopus.processInput is called with correct infix expression, postfixEvalModel.result should be set to the correct result, if infix expression was incorrect it should be set to an error', function(assert) {
     octopus.processInput(['1', '-', '2', '*', '3']);
     assert.strictEqual(postfixEvalModel.result, -5, '1 - 2 * 3 = -5');
-    clearStackAndQueue();
-    clearStackAndResult();
+    octopus.resetModels();
     octopus.processInput(['10', '/', '5', '+', '2', '*', '8', '-', '20']);
     assert.strictEqual(postfixEvalModel.result, -2, '10 / 5 + 2 * 8 - 20 = -2');
-    clearStackAndQueue();
-    clearStackAndResult();
+    octopus.resetModels();
     octopus.processInput(['999', '+', '8', '/', '66', '-', '10', '*', '777', '-', '999']);
     assert.strictEqual(postfixEvalModel.result, -7769.878787878788, '999+8/66-10*777-999 = -7769.878787878788');
-    clearStackAndQueue();
-    clearStackAndResult();
+    octopus.resetModels();
     octopus.processInput(['9', '-', '-9']);
     assert.strictEqual(postfixEvalModel.result, 18, '9 - -9 = 18');
-    clearStackAndQueue();
-    clearStackAndResult();
+    octopus.resetModels();
     octopus.processInput(['-200', '*', '-9']);
     assert.strictEqual(postfixEvalModel.result, 1800, '-200 * -9 = 1800');
-    clearStackAndQueue();
-    clearStackAndResult();
+    octopus.resetModels();
+    view.inputSelector.value = '';
+})
+
+// View Tests
+
+QUnit.test('If input or output exceeds digit limit, error should be displayed', function(assert) {
+    for (let i = 0; i < 21; i++) {
+        simulateKeyboardEvent(9);
+    }
+    assert.strictEqual(view.inputSelector.value, 'Digit Limit Met', 'when input exceeds 20 characters, Digit Limit Met should be displayed');
 })

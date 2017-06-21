@@ -6,7 +6,8 @@ body {
     display: block;
     margin: auto;
     margin-top: 100px;
-    width: 350px;
+    width: 380px;
     padding: 10px;
     font-size: 30px;
+    text-align: right;
 }
