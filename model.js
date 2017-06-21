@@ -46,12 +46,13 @@ const checkAndPrepInputModel = {
         else { this.expression.pop(); }
     },
 
-    run(keydownEvent) {
-        if (/[0-9]/.test(keydownEvent.key)) { this.digit(keydownEvent.key); }
-        else if (/[*/+-]/.test(keydownEvent.key)) { this.operator(keydownEvent.key); }
-        else if (/\./.test(keydownEvent.key)) { this.period(keydownEvent.key); }
-        else if (keydownEvent.key === 'Backspace') { this.deleteCharacter(); }
-        else if (keydownEvent.key === 'Enter' && this.expression.length > 0 && !this.operatorReg.test(this.expression.slice(-1))) { octopus.processInput(this.expression); }
+    run(key) {
+        if (/[0-9]/.test(key)) { this.digit(key); }
+        else if (/[*/+-]/.test(key)) { this.operator(key); }
+        else if (/\./.test(key)) { this.period(key); }
+        else if (key === 'Backspace') { this.deleteCharacter(); }
+        else if (key === 'Enter' && this.expression.length > 0 && !this.operatorReg.test(this.expression.slice(-1))) { octopus.processInput(this.expression); }
+        else if (key === 'ClearAll') { octopus.clearAll(); }
     },
 
     lastIsPosNegSign() {

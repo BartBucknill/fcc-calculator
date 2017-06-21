@@ -3,11 +3,13 @@
 const octopus = {
 
     setup() {
-        view.addListener();
+        view.addInputFieldListener();
+        view.addButtonsListener();
+        view.addToggleButtonsListener();
     },
 
-    inputCheckExpressionUpdate(keydownEvent) {
-        checkAndPrepInputModel.run(keydownEvent);
+    inputCheckExpressionUpdate(key) {
+        checkAndPrepInputModel.run(key);
         view.renderToInputField(checkAndPrepInputModel.expressionString());
         if (postfixEvalModel.error()) {
             this.resetModels();
@@ -25,6 +27,11 @@ const octopus = {
         checkAndPrepInputModel.reset();
         shuntModel.reset();
         postfixEvalModel.reset();
+    },
+
+    clearAll() {
+        this.resetModels();
+        view.clear();
     }
 
 }
