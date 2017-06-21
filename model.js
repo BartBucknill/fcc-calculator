@@ -12,10 +12,10 @@ const checkAndPrepInputModel = {
 
     formatResult(n) {
         //thanks to: https://stackoverflow.com/a/36028587/6848825
-        return Number(n).toFixed(15).replace(/\.?0+$/,"");
+        return Number(n).toPrecision(15).replace(/\.?0+$/,"");
     },
 
-    integerReg: /^[-0-9]+$/,
+    integerReg: /^[+\-0-9]+$/,
 
     operatorReg: /^[*/+-]+$/,
 
@@ -26,7 +26,7 @@ const checkAndPrepInputModel = {
     },
 
     lastIsInteger() {
-        return this.integerReg.test(this.lastItem());
+        return isFinite(this.lastItem()) && this.integerReg.test(this.lastItem());
     },
 
     isOperator(from) {
@@ -89,7 +89,7 @@ const checkAndPrepInputModel = {
     
     period(input) {
         if (this.lastIsInteger()) {
-           this.concatLastItem(input); 
+           this.concatLastItem(input);
         }
         if (this.isOperator(-1) || this.expression.length === 0) {
             this.expression.push('0.');
