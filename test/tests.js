@@ -232,8 +232,8 @@ QUnit.test('if octopus.processInput is called with correct infix expression, pos
 // View Tests
 
 QUnit.test('If input or output exceeds digit limit, error should be displayed', function(assert) {
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 18; i++) {
         simulateKeyboardEvent(9);
     }
-    assert.strictEqual(view.inputSelector.value, 'Digit Limit Met', 'when input exceeds 15s characters, Digit Limit Met should be displayed');
+    assert.strictEqual(view.inputSelector.value, 'Digit Limit Met', 'when input exceeds 17 characters, Digit Limit Met should be displayed');
 })
