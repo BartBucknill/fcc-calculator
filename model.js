@@ -10,6 +10,11 @@ const checkAndPrepInputModel = {
         return this.expression.join('');
     },
 
+    formatResult(n) {
+        //thanks to: https://stackoverflow.com/a/36028587/6848825
+        return Number(n).toFixed(15).replace(/\.?0+$/,"");
+    },
+
     integerReg: /^[-0-9]+$/,
 
     operatorReg: /^[*/+-]+$/,
@@ -111,7 +116,7 @@ const shuntModel = {
     
     parseArray(array) {
         array.forEach(item => {
-            if (isFinite(item)) { this.queue.push(parseFloat(item)); }
+            if (isFinite(item)) { this.queue.push(parseFloat(item)); } //where string becomes number
             else { this.placeOperator(item); }
         })
     },

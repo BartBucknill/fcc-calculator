@@ -18,7 +18,7 @@ const octopus = {
         shuntModel.run(infixArray);
         postfixEvalModel.run(shuntModel.queue);
         shuntModel.queue = [];
-        checkAndPrepInputModel.expression = [postfixEvalModel.result.toString()];
+        checkAndPrepInputModel.expression = [checkAndPrepInputModel.formatResult(postfixEvalModel.result)];
     },
 
     resetModels() {

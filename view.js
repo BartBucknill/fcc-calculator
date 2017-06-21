@@ -21,7 +21,7 @@ const view = {
     },
 
     renderToInputField(expression) {
-        if (expression.length < 21) {
+        if (expression.length < 18) {
             this.inputSelector.value = expression;
         }
         else { this.digitLimitMet() }
