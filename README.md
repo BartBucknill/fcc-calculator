@@ -1,0 +1,2 @@
+## TO DO:
+* Fix floating point weirdness with minimal impact on number of decimal places permitted: rounding to 15 places has removed some 'errors' in floating point (such as the result of 0.1 * 0.2); but some expressions still give an 'incorrect' result in fewer decimal places.
