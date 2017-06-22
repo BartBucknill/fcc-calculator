@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>QUnit Example</title>
+  <link rel="stylesheet" href="test/qunit-css.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture">
+        <main id="calculator">
+    
+    <input id="input" type="text" onpaste="return false" autofocus placeholder="2+3-8/6*99">
+    
+    <section id="buttons" class="buttons">
+        <span id="ClearAll" class="button danger">AC</span>
+        <span id="Backspace" class="button danger">CE</span>
+        <span id="/" class="button">/</span>
+        <span id="*" class="button">X</span>
+        <span id="7" class="button">7</span>
+        <span id="8" class="button">8</span>
+        <span id="9" class="button">9</span>
+        <span id="-" class="button">-</span>
+        <span id="4" class="button">4</span>
+        <span id="5" class="button">5</span>
+        <span id="6" class="button">6</span>
+        <span id="+" class="button">+</span>
+        <span id="1" class="button">1</span>
+        <span id="2" class="button">2</span>
+        <span id="3" class="button">3</span>
+        <span id="Enter" class="button expand-height">=</span>
+        <span id="0" class="button expand-width move-up ios-position-bugfix">0</span>
+        <span id="." class="button move-up move-left">.</span>
+    </section>
+
+    <section id="toggle-buttons">
+      Toggle Buttons
+    </section>
+
+    </main>
+  </div>
+  <script src="test/qunit.js"></script>
+  <script src="octopus.js"></script>
+  <script src="view.js"></script>
+  <script src="model.js"></script>
+  <script src="test/tests.js"></script>
+</body>
+</html>
