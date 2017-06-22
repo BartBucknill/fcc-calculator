@@ -1,66 +1,48 @@
 //input verification and expression update Tests (view, octopus, inputOutputModel).
 
-//helper
-function simulateKeyboardEvent(keyValue, whichValue = undefined) {
-    let event = new KeyboardEvent('keydown', { key: keyValue, which: whichValue });
-    view.inputSelector.dispatchEvent(event);
-}
-//helper
-function clearExpression() {
-    inputOutputModel.expression = [];
+function simulateKeyboardEvent(keyValues) {
+    keyValues.forEach((keyValue) => {
+        let event = new KeyboardEvent('keydown', { key: keyValue });
+        view.inputSelector.dispatchEvent(event);
+    });
 }
 
 QUnit.test('permitted characters only input should be placed in expression and displayed in input field', function(assert) {
-    simulateKeyboardEvent('9');
+    simulateKeyboardEvent(['9']);
     assert.deepEqual(inputOutputModel.expression, ['9'], 'input of 9 should be placed in expression array');
     assert.strictEqual(view.inputSelector.value, '9', 'permitted input should be displayed as string in input field');
-    simulateKeyboardEvent('.');
+    simulateKeyboardEvent(['.']);
     assert.deepEqual(inputOutputModel.expression, ['9.'], 'input of "." after number should be concatenated with previous number in expression array');
     assert.deepEqual(view.inputSelector.value, '9.', 'permitted input should be displayed as string in input field');
-    simulateKeyboardEvent('*');
+    simulateKeyboardEvent(['*']);
     assert.deepEqual(inputOutputModel.expression, ['9.','*'], 'input of * should be inserted into array as new item');
     assert.strictEqual(view.inputSelector.value, '9.*', 'permitted input should be displayed as string in input field');
-    simulateKeyboardEvent('.');
+    simulateKeyboardEvent(['.']);
     assert.deepEqual(inputOutputModel.expression, ['9.','*','0.'], 'input of "." after operator should be inserted into array as new item prepended with 0');
     assert.strictEqual(view.inputSelector.value, '9.*0.', 'permitted input should be displayed as string in input field');
-    clearExpression();
+    inputOutputModel.reset();
 })
 
 QUnit.test('backspace should remove last character, either an array item or last character of last item, value of input field should be updated', function(assert) {
-    simulateKeyboardEvent('1');
-    simulateKeyboardEvent('+');
-    simulateKeyboardEvent('Backspace');
+    simulateKeyboardEvent(['1','+','Backspace']);
     assert.deepEqual(inputOutputModel.expression, ['1'], 'last item should have been deleted');
     assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
-    simulateKeyboardEvent('2');
-    simulateKeyboardEvent('Backspace');
+    simulateKeyboardEvent(['2','Backspace']);
     assert.deepEqual(inputOutputModel.expression, ['1'], 'last character of number 12 should have been deleted leaving 1');
     assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
-    clearExpression();
+    inputOutputModel.reset();
 })
 
 QUnit.test('on enter expression should be evaluated, the result should be in postfixEvalModel.result and should be displayed in the input field', function(assert) {
-    simulateKeyboardEvent('1');
-    simulateKeyboardEvent('+');
-    simulateKeyboardEvent('2');
-    simulateKeyboardEvent('Enter');
+    simulateKeyboardEvent(['1','+','2','Enter']);
     assert.strictEqual(postfixEvalModel.result, 3, 'input 1 + 2 enter, should make postfixEvalModel.result = 3');
     assert.strictEqual(view.inputSelector.value, '3', 'input 1 + 2 enter, should make input field value = 3');
     octopus.resetModels();
-    simulateKeyboardEvent('1');
-    simulateKeyboardEvent('-');
-    simulateKeyboardEvent('-');
-    simulateKeyboardEvent('2');
-    simulateKeyboardEvent('Enter');
+    simulateKeyboardEvent(['1','-','-','2','Enter']);
     assert.strictEqual(postfixEvalModel.result, 3, 'input 1 - - 2 enter, should make postfixEvalModel.result = 3');
     assert.strictEqual(view.inputSelector.value, '3', 'input 1 - - 2 enter, should make input field value = 3');
     octopus.resetModels();
-    simulateKeyboardEvent('-');
-    simulateKeyboardEvent('10');
-    simulateKeyboardEvent('+');
-    simulateKeyboardEvent('-');
-    simulateKeyboardEvent('2');
-    simulateKeyboardEvent('Enter');
+    simulateKeyboardEvent(['-','10','+','-','2','Enter']);
     assert.strictEqual(postfixEvalModel.result, -12, 'input - 10 + - 2 enter, should make postfixEvalModel.result = -12');
     assert.strictEqual(view.inputSelector.value, '-12', 'input - 10 + - 2 enter, should make input field value = -12');
     octopus.resetModels();
@@ -75,24 +57,20 @@ QUnit.test('isOperator method should return true if all items are of set +-*/ an
     assert.strictEqual(inputOutputModel.isOperator(-1), false, 'if passed -1 and last item !operator method should return false');
     inputOutputModel.expression = ['1'];
     assert.strictEqual(inputOutputModel.isOperator(-2), false, 'if passed -2 and expression.length = 1 and item is not operator should return false');
-    clearExpression();
+    inputOutputModel.reset();
 })
 
 QUnit.test('it should be possible to enter +- to denote positive or negative numbers', function(assert) {
-    simulateKeyboardEvent('-');
+    simulateKeyboardEvent(['-']);
     assert.deepEqual(inputOutputModel.expression, ['-'], 'input "-" when input field empty should be placed in expression as first item');
     assert.strictEqual(view.inputSelector.value, '-', 'input "-" when input field is empty should set input field value to -');
-    simulateKeyboardEvent('-');
+    simulateKeyboardEvent(['-']);
     assert.deepEqual(inputOutputModel.expression, ['-'], 'should not be possible to input two - at beginning of expression');
     assert.strictEqual(view.inputSelector.value, '-', 'input second - should not be possible, input field value should remain -');
-    simulateKeyboardEvent('2');
+    simulateKeyboardEvent(['2']);
     assert.deepEqual(inputOutputModel.expression, ['-2'], '2 after - as first item should be concatenated forming -2');
     assert.strictEqual(view.inputSelector.value, '-2', '2 after - as first item should change input field value to -2');
-    simulateKeyboardEvent('+');
-    simulateKeyboardEvent('2');
-    simulateKeyboardEvent('+');
-    simulateKeyboardEvent('-');
-    simulateKeyboardEvent('6');
+    simulateKeyboardEvent(['+','2','+','-','6']);
     assert.deepEqual(inputOutputModel.expression, ['-2', '+', '2','+','-6'], '- should be treated as denoting a negative number when following another operator');
     assert.strictEqual(view.inputSelector.value, '-2+2+-6', '- should be treated as denoting a negative number when following another operator');
     octopus.resetModels();
@@ -124,12 +102,6 @@ QUnit.test('digit, operator, and period functions should accept and append to la
 })
 
 //shuntModel Tests 
-
-//helper: reset stack and queue after tests
-function clearStackAndQueue() { 
-    shuntModel.stack = []; 
-    shuntModel.queue = [];
-}
 
 QUnit.test('check if operator on top of stack is of higher than or equal precedence to current operator', function(assert) {
     assert.strictEqual(shuntModel.topOfStackPrecedenceHigherOrEqual('-', '*'), true, '* > -, should return true');
@@ -169,12 +141,6 @@ QUnit.test('when an infix expression as an array of string operators and numbers
 
 
 //postfixEvalModel Tests
-
-//helper
-function clearStackAndResult() {
-    postfixEvalModel.stack = [];
-    postfixEvalModel.result = 'No result yet calculated';
-}
 
 QUnit.test('when eval() is called with given operator and 2 or more operands on the stack it should remove the operands from the array push the result into the array', function(assert) {
     postfixEvalModel.stack = [8,4];
@@ -226,14 +192,14 @@ QUnit.test('if octopus.processInput is called with correct infix expression, pos
     octopus.processInput(['-200', '*', '-9']);
     assert.strictEqual(postfixEvalModel.result, 1800, '-200 * -9 = 1800');
     octopus.resetModels();
-    view.inputSelector.value = '';
+    view.clear();
 })
 
 // View Tests
 
 QUnit.test('If input or output exceeds digit limit, error should be displayed', function(assert) {
-    for (let i = 0; i < 18; i++) {
-        simulateKeyboardEvent(9);
+    for (let i = 0; i < 14; i++) {
+        simulateKeyboardEvent([9]);
     }
     assert.strictEqual(view.inputSelector.value, 'Digit Limit Met', 'when input exceeds 17 characters, Digit Limit Met should be displayed');
 })
