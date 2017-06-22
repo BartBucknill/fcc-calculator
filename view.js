@@ -29,12 +29,6 @@ const view = {
             octopus.inputCheckExpressionUpdate(clickEvent.target.id);
         })
     },
-
-    addToggleButtonsListener() {
-        this.toggleButtonsSelector.addEventListener('click', function(clickEvent) {
-            view.buttonsSelector.classList.toggle('display-buttons');
-        })
-    },
     
     renderToInputField(expression) {
         if (expression.length < 14) {

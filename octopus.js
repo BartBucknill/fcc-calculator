@@ -5,7 +5,6 @@ const octopus = {
     setup() {
         view.addInputFieldListener();
         view.addButtonsListener();
-        view.addToggleButtonsListener();
     },
 
     inputCheckExpressionUpdate(key) {
