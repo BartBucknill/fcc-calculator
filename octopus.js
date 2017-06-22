@@ -19,7 +19,7 @@ const octopus = {
     processInput(infixArray) {
         shuntModel.run(infixArray);
         postfixEvalModel.run(shuntModel.queue);
-        shuntModel.queue = [];
+        shuntModel.reset();
         inputOutputModel.expression = [inputOutputModel.formatResult(postfixEvalModel.result)];
     },
 
