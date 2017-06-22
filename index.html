@@ -35,10 +35,20 @@
         <span id="." class="button move-up move-left">.</span>
     </section>
 
+    <section id="color-picker">
+      <button class="jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)'}">
+		Pick text color
+	</button>
+
+	HEX value: <input id="chosen-value" value="000000">
+    </section>
+
     </main>
 
     <script src="octopus.js"></script>
     <script src="view.js"></script>
     <script src="model.js"></script>
+    <script src="jscolor-2.0.4/jscolor.js"></script>
+
   </body>
 </html>
