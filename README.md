@@ -1,2 +1,5 @@
-## TO DO:
-* Fix floating point weirdness with minimal impact on number of decimal places permitted: rounding to 15 places has removed some 'errors' in floating point (such as the result of 0.1 * 0.2); but some expressions still give an 'incorrect' result in fewer decimal places.
+# Calculator
+* Does not use ```eval()```
+* Implements the [Shunting Yard Algorithm](https://en.wikipedia.org/wiki/Shunting-yard_algorithm). This converts infix notation to postfix, which makes evaluation easier and takes care of order of operations.
+* Allows typing of expressions in addition to providing buttons.
+* This is a [freeCodeCamp project](https://www.freecodecamp.com/challenges/build-a-javascript-calculator).
