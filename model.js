@@ -4,10 +4,16 @@ const checkAndPrepInputModel = {
     
     expression: [],
 
+    integerReg: /^[+\-0-9]+$/,
+
+    operatorReg: /^[*/+-]+$/,
+
+    plusMinusReg: /[+-]/,
+
     reset() { this.expression = []; },
 
     expressionString() {
-        return this.expression.join('');
+        return this.expression.join(''); 
     },
 
     formatResult(n) {
@@ -15,18 +21,24 @@ const checkAndPrepInputModel = {
         return Number(n).toPrecision(11).replace(/\.?0+$/,"");
     },
 
-    integerReg: /^[+\-0-9]+$/,
-
-    operatorReg: /^[*/+-]+$/,
-
-    plusMinusReg: /[+-]/,
-
     lastItem() {
         return this.expression[this.expression.length - 1];
     },
 
     lastIsInteger() {
         return isFinite(this.lastItem()) && this.integerReg.test(this.lastItem());
+    },
+
+    lastIsPosNegSign() {
+        let lastIsSecondOperatorInSequence = this.expression.length > 0 && this.isOperator(-2);
+        let lastIsNegPosSignAndIsFirstItem = this.expression.length == 1 && this.plusMinusReg.test(this.lastItem());
+        return lastIsSecondOperatorInSequence || lastIsNegPosSignAndIsFirstItem;
+    },
+
+    acceptNegPosSign(input) {
+        let inputIsFirstItem = this.expression.length === 0;
+        let inputIsSecondOperatorInSequence = this.expression.length > 1 && isFinite(this.expression.slice(-2,-1));
+        return inputIsFirstItem || inputIsSecondOperatorInSequence;
     },
 
     isOperator(from) {
@@ -55,12 +67,6 @@ const checkAndPrepInputModel = {
         else if (key === 'ClearAll') { octopus.clearAll(); }
     },
 
-    lastIsPosNegSign() {
-        let lastIsSecondOperatorInSequence = this.expression.length > 0 && this.isOperator(-2);
-        let lastIsNegPosSignAndIsFirstItem = this.expression.length == 1 && this.plusMinusReg.test(this.lastItem());
-        return lastIsSecondOperatorInSequence || lastIsNegPosSignAndIsFirstItem;
-    },
-
     digit(input) {
         if (isFinite(this.lastItem())) {
             this.concatLastItem(input);
@@ -70,19 +76,12 @@ const checkAndPrepInputModel = {
         } 
         else { this.expression.push(input); }
     },
-
-    acceptNegPosSign(input) {
-        let isPlusMinus = this.plusMinusReg.test(input);
-        let isFirstItem = this.expression.length === 0;
-        let isSecondOperatorInSequence = this.expression.length > 1 && isFinite(this.expression.slice(-2,-1));
-        return isPlusMinus && (isFirstItem || isSecondOperatorInSequence);
-    },
    
     operator(input) {
         if (isFinite(this.lastItem())) {
             this.expression.push(input);
         }
-        else if (this.acceptNegPosSign(input)) {
+        else if (this.plusMinusReg.test(input) && this.acceptNegPosSign(input)) {
             this.expression.push(input);
         } 
     },
