@@ -1,4 +1,4 @@
-//input verification and expression update Tests (view, octopus, checkAndPrepInputModel).
+//input verification and expression update Tests (view, octopus, inputOutputModel).
 
 //helper
 function simulateKeyboardEvent(keyValue, whichValue = undefined) {
@@ -7,21 +7,21 @@ function simulateKeyboardEvent(keyValue, whichValue = undefined) {
 }
 //helper
 function clearExpression() {
-    checkAndPrepInputModel.expression = [];
+    inputOutputModel.expression = [];
 }
 
 QUnit.test('permitted characters only input should be placed in expression and displayed in input field', function(assert) {
     simulateKeyboardEvent('9');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['9'], 'input of 9 should be placed in expression array');
+    assert.deepEqual(inputOutputModel.expression, ['9'], 'input of 9 should be placed in expression array');
     assert.strictEqual(view.inputSelector.value, '9', 'permitted input should be displayed as string in input field');
     simulateKeyboardEvent('.');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['9.'], 'input of "." after number should be concatenated with previous number in expression array');
+    assert.deepEqual(inputOutputModel.expression, ['9.'], 'input of "." after number should be concatenated with previous number in expression array');
     assert.deepEqual(view.inputSelector.value, '9.', 'permitted input should be displayed as string in input field');
     simulateKeyboardEvent('*');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['9.','*'], 'input of * should be inserted into array as new item');
+    assert.deepEqual(inputOutputModel.expression, ['9.','*'], 'input of * should be inserted into array as new item');
     assert.strictEqual(view.inputSelector.value, '9.*', 'permitted input should be displayed as string in input field');
     simulateKeyboardEvent('.');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['9.','*','0.'], 'input of "." after operator should be inserted into array as new item prepended with 0');
+    assert.deepEqual(inputOutputModel.expression, ['9.','*','0.'], 'input of "." after operator should be inserted into array as new item prepended with 0');
     assert.strictEqual(view.inputSelector.value, '9.*0.', 'permitted input should be displayed as string in input field');
     clearExpression();
 })
@@ -30,11 +30,11 @@ QUnit.test('backspace should remove last character, either an array item or last
     simulateKeyboardEvent('1');
     simulateKeyboardEvent('+');
     simulateKeyboardEvent('Backspace');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['1'], 'last item should have been deleted');
+    assert.deepEqual(inputOutputModel.expression, ['1'], 'last item should have been deleted');
     assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
     simulateKeyboardEvent('2');
     simulateKeyboardEvent('Backspace');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['1'], 'last character of number 12 should have been deleted leaving 1');
+    assert.deepEqual(inputOutputModel.expression, ['1'], 'last character of number 12 should have been deleted leaving 1');
     assert.strictEqual(view.inputSelector.value, '1', 'input field value should have been updated to 1');
     clearExpression();
 })
@@ -66,60 +66,60 @@ QUnit.test('on enter expression should be evaluated, the result should be in pos
     octopus.resetModels();
 })
 
-//checkAndPrepInputModel Tests
+//inputOutputModel Tests
 
 QUnit.test('isOperator method should return true if all items are of set +-*/ and false otherwise', function(assert) {
-    checkAndPrepInputModel.expression = ['+', '-'];
-    assert.strictEqual(checkAndPrepInputModel.isOperator(-2), true, 'if passed -2 and last 2 items are operators method should return true');
-    checkAndPrepInputModel.expression = ['12'];
-    assert.strictEqual(checkAndPrepInputModel.isOperator(-1), false, 'if passed -1 and last item !operator method should return false');
-    checkAndPrepInputModel.expression = ['1'];
-    assert.strictEqual(checkAndPrepInputModel.isOperator(-2), false, 'if passed -2 and expression.length = 1 and item is not operator should return false');
+    inputOutputModel.expression = ['+', '-'];
+    assert.strictEqual(inputOutputModel.isOperator(-2), true, 'if passed -2 and last 2 items are operators method should return true');
+    inputOutputModel.expression = ['12'];
+    assert.strictEqual(inputOutputModel.isOperator(-1), false, 'if passed -1 and last item !operator method should return false');
+    inputOutputModel.expression = ['1'];
+    assert.strictEqual(inputOutputModel.isOperator(-2), false, 'if passed -2 and expression.length = 1 and item is not operator should return false');
     clearExpression();
 })
 
 QUnit.test('it should be possible to enter +- to denote positive or negative numbers', function(assert) {
     simulateKeyboardEvent('-');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['-'], 'input "-" when input field empty should be placed in expression as first item');
+    assert.deepEqual(inputOutputModel.expression, ['-'], 'input "-" when input field empty should be placed in expression as first item');
     assert.strictEqual(view.inputSelector.value, '-', 'input "-" when input field is empty should set input field value to -');
     simulateKeyboardEvent('-');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['-'], 'should not be possible to input two - at beginning of expression');
+    assert.deepEqual(inputOutputModel.expression, ['-'], 'should not be possible to input two - at beginning of expression');
     assert.strictEqual(view.inputSelector.value, '-', 'input second - should not be possible, input field value should remain -');
     simulateKeyboardEvent('2');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['-2'], '2 after - as first item should be concatenated forming -2');
+    assert.deepEqual(inputOutputModel.expression, ['-2'], '2 after - as first item should be concatenated forming -2');
     assert.strictEqual(view.inputSelector.value, '-2', '2 after - as first item should change input field value to -2');
     simulateKeyboardEvent('+');
     simulateKeyboardEvent('2');
     simulateKeyboardEvent('+');
     simulateKeyboardEvent('-');
     simulateKeyboardEvent('6');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['-2', '+', '2','+','-6'], '- should be treated as denoting a negative number when following another operator');
+    assert.deepEqual(inputOutputModel.expression, ['-2', '+', '2','+','-6'], '- should be treated as denoting a negative number when following another operator');
     assert.strictEqual(view.inputSelector.value, '-2+2+-6', '- should be treated as denoting a negative number when following another operator');
     octopus.resetModels();
 })
 
 QUnit.test('digit, operator, and period functions should accept and append to last item or create new item, or reject, new input as appropriate', function(assert) {
-    checkAndPrepInputModel.digit('2');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['2'], 'if array empty, digit should be added as new item');
-    checkAndPrepInputModel.digit('0');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20'], 'if last item is digit, concatenate digit with it');
-    checkAndPrepInputModel.operator('+');
-    checkAndPrepInputModel.digit('0');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0'], 'if last item is operator, digit should be added to array as new item');
-    checkAndPrepInputModel.period('.');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.'], 'if last item is integer, concatenate period with it');
-    checkAndPrepInputModel.period('.');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.'], 'if last item is decimal, reject period');
-    checkAndPrepInputModel.digit('3');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.3'], 'if last item is number, concatenate digit with it');
-    checkAndPrepInputModel.operator('/');
-    checkAndPrepInputModel.operator('/');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.3','/'], 'if last item is operator, reject operator');
-    checkAndPrepInputModel.period('.');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['20','+','0.3','/','0.'], 'if last item is operator, add period prepended to 0 as new array item');
+    inputOutputModel.digit('2');
+    assert.deepEqual(inputOutputModel.expression, ['2'], 'if array empty, digit should be added as new item');
+    inputOutputModel.digit('0');
+    assert.deepEqual(inputOutputModel.expression, ['20'], 'if last item is digit, concatenate digit with it');
+    inputOutputModel.operator('+');
+    inputOutputModel.digit('0');
+    assert.deepEqual(inputOutputModel.expression, ['20','+','0'], 'if last item is operator, digit should be added to array as new item');
+    inputOutputModel.period('.');
+    assert.deepEqual(inputOutputModel.expression, ['20','+','0.'], 'if last item is integer, concatenate period with it');
+    inputOutputModel.period('.');
+    assert.deepEqual(inputOutputModel.expression, ['20','+','0.'], 'if last item is decimal, reject period');
+    inputOutputModel.digit('3');
+    assert.deepEqual(inputOutputModel.expression, ['20','+','0.3'], 'if last item is number, concatenate digit with it');
+    inputOutputModel.operator('/');
+    inputOutputModel.operator('/');
+    assert.deepEqual(inputOutputModel.expression, ['20','+','0.3','/'], 'if last item is operator, reject operator');
+    inputOutputModel.period('.');
+    assert.deepEqual(inputOutputModel.expression, ['20','+','0.3','/','0.'], 'if last item is operator, add period prepended to 0 as new array item');
     octopus.resetModels();
-    checkAndPrepInputModel.period('.');
-    assert.deepEqual(checkAndPrepInputModel.expression, ['0.'], 'if array is empty, add period prepended to 0 as new array item');
+    inputOutputModel.period('.');
+    assert.deepEqual(inputOutputModel.expression, ['0.'], 'if array is empty, add period prepended to 0 as new array item');
     octopus.resetModels();
 })
 
