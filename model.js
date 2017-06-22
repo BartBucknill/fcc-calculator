@@ -1,6 +1,6 @@
 'use strict';
 
-const checkAndPrepInputModel = {
+const inputOutputModel = {
     
     expression: [],
 
