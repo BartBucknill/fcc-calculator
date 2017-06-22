@@ -12,8 +12,11 @@ body {
 
 #calculator {
     margin: 50px auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
     width: 310px;
 }
 
@@ -36,10 +39,13 @@ body {
 .buttons {
     position: relative;
     display: none;
-    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
 }
 
 .display-buttons {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 
@@ -50,9 +56,15 @@ body {
     text-align: center;
     background-color: rgb(96.1%, 96.1%, 96.1%);
     cursor: pointer;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
 }
 
 .danger {
@@ -70,6 +82,10 @@ body {
 .move-up {
     position: absolute;
     bottom: 0;
+}
+
+.ios-position-bugfix {
+    left:0;
 }
 
 .move-left {

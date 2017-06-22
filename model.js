@@ -12,7 +12,7 @@ const checkAndPrepInputModel = {
 
     formatResult(n) {
         //thanks to: https://stackoverflow.com/a/36028587/6848825
-        return Number(n).toPrecision(15).replace(/\.?0+$/,"");
+        return Number(n).toPrecision(11).replace(/\.?0+$/,"");
     },
 
     integerReg: /^[+\-0-9]+$/,
