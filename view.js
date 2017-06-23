@@ -8,6 +8,8 @@ const view = {
 
     colorPickerSelector: document.getElementsByClassName('jscolor')[0],
 
+    screenSelector: document.getElementById('screen'),
+
     clear() {
         this.inputSelector.value = '';
     },
@@ -50,6 +52,10 @@ const view = {
             this.inputSelector.value = expression;
         }
         else { this.digitLimitMet() }
+    },
+
+    renderToScreen(htmlString) {
+        this.screenSelector.innerHTML = htmlString;
     }
 
 }

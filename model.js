@@ -4,8 +4,18 @@ const colorPickerModel = {
 
     waitingForPick: false,
 
-    setColor(key, color) { this.key = color; }
+    setColor(key, color) { 
+        this[key] = `<span style="color: ${color}">${key}</span>`;
+    },
 
+    prepColorString(expression) {
+        let colorString = '';
+        expression.split('').forEach((item) => {
+            if (this[item]) { colorString += this[item]; }
+            else { colorString += item; }
+        });
+        return colorString;
+    }
 
 }
 
