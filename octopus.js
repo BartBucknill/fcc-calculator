@@ -35,6 +35,7 @@ const octopus = {
         let color = view.getColor();
         view.changeColor(key, color);
         colorPickerModel.setColor(key, color);
+        this.setWaitingForPick(false);
     },
 
     resetModels() {
