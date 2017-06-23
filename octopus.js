@@ -5,6 +5,7 @@ const octopus = {
     setup() {
         view.addInputFieldListener();
         view.addButtonsListener();
+        view.addColorPickerListener();
     },
 
     inputCheckExpressionUpdate(key) {
@@ -20,6 +21,20 @@ const octopus = {
         postfixEvalModel.run(shuntModel.queue);
         shuntModel.reset();
         inputOutputModel.expression = [inputOutputModel.formatResult(postfixEvalModel.result)];
+    },
+
+    setWaitingForPick(bool) {
+        colorPickerModel.waitingForPick = bool;
+    },
+
+    isWaitingForPick() {
+        return colorPickerModel.waitingForPick;
+    },
+
+    pickColor(key) {
+        let color = view.getColor();
+        view.changeColor(key, color);
+        colorPickerModel.setColor(key, color);
     },
 
     resetModels() {

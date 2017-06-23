@@ -6,7 +6,7 @@ const view = {
 
     buttonsSelector: document.getElementById('buttons'),
 
-    toggleButtonsSelector: document.getElementById('toggle-buttons'),
+    colorPickerSelector: document.getElementsByClassName('jscolor')[0],
 
     clear() {
         this.inputSelector.value = '';
@@ -18,16 +18,31 @@ const view = {
     },
 
     addInputFieldListener() {
-        this.inputSelector.addEventListener('keydown', function(keydownEvent) {
+        this.inputSelector.addEventListener('keydown', (keydownEvent) => {
             keydownEvent.preventDefault();
             octopus.inputCheckExpressionUpdate(keydownEvent.key); 
         })
     },
 
     addButtonsListener() {
-        this.buttonsSelector.addEventListener('click', function(clickEvent) {
+        this.buttonsSelector.addEventListener('click', (clickEvent) => {
             octopus.inputCheckExpressionUpdate(clickEvent.target.id);
         })
+    },
+
+    addColorPickerListener() {
+        this.colorPickerSelector.addEventListener('click', (clickEvent) => {
+            octopus.setWaitingForPick(true);
+        })
+    },
+
+    getColor() {
+        return this.colorPickerSelector.style['background-color'];
+    },
+
+    changeColor(id, color) {
+        let elem = document.getElementById(id);
+        elem.style['background-color'] = color;
     },
     
     renderToInputField(expression) {

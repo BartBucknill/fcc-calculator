@@ -1,5 +1,14 @@
 'use strict';
 
+const colorPickerModel = {
+
+    waitingForPick: false,
+
+    setColor(key, color) { this.key = color; }
+
+
+}
+
 const inputOutputModel = {
     
     expression: [],
@@ -59,6 +68,7 @@ const inputOutputModel = {
     },
 
     run(key) {
+        if (octopus.isWaitingForPick()) { octopus.pickColor(key); }
         if (/[0-9]/.test(key)) { this.digit(key); }
         else if (/[*/+-]/.test(key)) { this.operator(key); }
         else if (/\./.test(key)) { this.period(key); }
