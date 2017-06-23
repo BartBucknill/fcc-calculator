@@ -40,6 +40,10 @@ const inputOutputModel = {
         return Number(n).toPrecision(11).replace(/\.?0+$/,"");
     },
 
+    expressionLengthOk(expressionString) {
+        return expressionString.length <= 13;
+    },
+
     lastItem() {
         return this.expression[this.expression.length - 1];
     },
@@ -79,7 +83,7 @@ const inputOutputModel = {
 
     run(key) {
         if (octopus.isWaitingForPick()) { octopus.pickColor(key); }
-        if (/[0-9]/.test(key)) { this.digit(key); }
+        else if (/[0-9]/.test(key)) { this.digit(key); }
         else if (/[*/+-]/.test(key)) { this.operator(key); }
         else if (/\./.test(key)) { this.period(key); }
         else if (key === 'Backspace') { this.deleteCharacter(); }

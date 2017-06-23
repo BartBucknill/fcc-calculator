@@ -2,8 +2,6 @@
 
 const view = {
 
-    inputSelector: document.getElementById('input'),
-
     buttonsSelector: document.getElementById('buttons'),
 
     colorPickerSelector: document.getElementsByClassName('jscolor')[0],
@@ -14,13 +12,17 @@ const view = {
         this.inputSelector.value = '';
     },
 
-    digitLimitMet() {
-        octopus.resetModels();
-        view.inputSelector.value = 'Digit Limit Met';
+    focusScreen() {
+        this.screenSelector.focus();
     },
 
-    addInputFieldListener() {
-        this.inputSelector.addEventListener('keydown', (keydownEvent) => {
+    digitLimitMet() {
+        octopus.resetModels();
+        this.renderToScreen('Digit Limit Met');
+    },
+
+    addScreenListener() {
+        this.screenSelector.addEventListener('keydown', (keydownEvent) => {
             keydownEvent.preventDefault();
             octopus.inputCheckExpressionUpdate(keydownEvent.key); 
         })
@@ -47,13 +49,6 @@ const view = {
         elem.style['background-color'] = color;
     },
     
-    renderToInputField(expression) {
-        if (expression.length < 14) {
-            this.inputSelector.value = expression;
-        }
-        else { this.digitLimitMet() }
-    },
-
     renderToScreen(htmlString) {
         this.screenSelector.innerHTML = htmlString;
     }

@@ -31,6 +31,16 @@ body {
     text-align: right;
 }
 
+#screen {
+    width: 308px;
+    height: 90px;
+    padding: 8px;
+    font-size: 2.5em;
+    text-align: right;
+    background-color:rgb(100%, 100%, 100%);
+    caret-color: rgb(100%, 100%, 100%);
+}
+
 #input, .button {
     margin: 1px;
 }
