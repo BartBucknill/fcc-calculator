@@ -122,7 +122,14 @@ textarea:focus, input:focus{
 }
 
 .color-picker-button {
-    width: 307px; 
-    height: 76.5px; 
+    width: calc(302px/4);
+    height: calc(306px/2);
     font-size: 19px;
 }
+
+#color-picker > p {
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+}
+
