@@ -203,9 +203,3 @@ QUnit.test('If input or output exceeds digit limit, error should be displayed', 
     }
     assert.strictEqual(view.screenSelector.textContent, 'Digit Limit Met', 'when input exceeds 17 characters, Digit Limit Met should be displayed');
 })
-
-//colorPicker Tests
-
-QUnit.test('click on color picker button should set waitingForPick to true', function(assert) {
-
-})
