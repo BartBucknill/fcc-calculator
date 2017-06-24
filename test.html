@@ -9,10 +9,10 @@
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture">
-        <main id="calculator">
-    
-    <input id="input" type="text" onpaste="return false" autofocus placeholder="2+3-8/6*99">
-    
+    <main id="calculator">
+   
+    <div id="screen" contenteditable="true" onpaste="return false"></div> 
+
     <section id="buttons" class="buttons">
         <span id="ClearAll" class="button danger">AC</span>
         <span id="Backspace" class="button danger">CE</span>
@@ -34,8 +34,12 @@
         <span id="." class="button move-up move-left">.</span>
     </section>
 
-    <section id="toggle-buttons">
-      Toggle Buttons
+      <section id="color-picker">
+      <button
+    class="jscolor {valueElement:null,value:'66ccff'}"
+    style="border:2px solid black">
+    Pick a color
+</button>
     </section>
 
     </main>

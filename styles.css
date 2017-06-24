@@ -1,3 +1,4 @@
+/* set defaults */
 
 * {
     box-sizing: border-box;
@@ -6,11 +7,29 @@
     font-family: 'Lato', sans-serif;
 }
 
+/* button reset, thanks to: http://code.stephenmorley.org/html-and-css/styling-buttons-with-css3/ */
+button{
+  margin      : 0;
+  padding     : 0;
+  border      : 0;
+  background  : transparent;
+  font-family : inherit;
+  font-size   : 1em;
+  cursor      : pointer;
+}
+
+button::-moz-focus-inner{
+  padding : 0;
+  border  : 0;
+}
+
+/* main */
+
 body {
     background-color: rgb(0%, 0%, 0%);
 }
 
-#calculator {
+.main {
     box-shadow: 0px 0px 4px 10px aliceblue;
     background-color: aliceblue;
     margin: 50px auto;
@@ -22,30 +41,21 @@ body {
     width: 310px;
 }
 
-#input {
-    display: inline-block;
-    width: 308px;
-    height: 90px;
-    padding: 8px;
-    font-size: 2.5em;
-    text-align: right;
-}
-
 #screen {
     width: 308px;
     height: 90px;
-    padding: 8px;
-    font-size: 2.5em;
+    padding: 20px 4px;
+    font-size: 40px;
     text-align: right;
     background-color:rgb(100%, 100%, 100%);
     caret-color: rgb(100%, 100%, 100%);
 }
 
-#input, .button {
+#screen, .button {
     margin: 1px;
 }
 
-#input:focus {
+#screen:focus {
     outline: none;
 }
 
@@ -65,7 +75,7 @@ textarea:focus, input:focus{
 .button {
     width: calc(302px/4);
     height: calc(306px/4);
-    font-size: 2em;
+    font-size: 38px;
     text-align: center;
     background-color: rgb(96.1%, 96.1%, 96.1%);
     box-shadow: inset 0px 0px 11px 0px lightgrey;
@@ -104,4 +114,15 @@ textarea:focus, input:focus{
 
 .move-left {
     right: calc(310px/4);
+}
+
+.js-color {
+    width: 100px;
+    height: 66px;
+}
+
+.color-picker-button {
+    width: 307px; 
+    height: 76.5px; 
+    font-size: 19px;
 }

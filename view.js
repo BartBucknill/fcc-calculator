@@ -9,7 +9,7 @@ const view = {
     screenSelector: document.getElementById('screen'),
 
     clear() {
-        this.inputSelector.value = '';
+        this.screenSelector.innerHTML = '';
     },
 
     focusScreen() {

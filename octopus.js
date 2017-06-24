@@ -11,14 +11,11 @@ const octopus = {
 
     inputCheckExpressionUpdate(key) {
         inputOutputModel.run(key);
-        //digitlimit met test must be inserted here
-        //line below must change to call colorPicker.model prepColorString, and pass result to view for rendering
         let expressionString = inputOutputModel.expressionString();
         if (inputOutputModel.expressionLengthOk(expressionString)) {
             view.renderToScreen(colorPickerModel.prepColorString(expressionString));
         }
         else { view.digitLimitMet(); }
-        //view.renderToInputField(inputOutputModel.expressionString());
         // TODO: check the below - does it make sense?
         if (postfixEvalModel.error()) {
             this.resetModels();
